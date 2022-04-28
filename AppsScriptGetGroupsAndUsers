@@ -6,7 +6,7 @@ function listAllGroups() {
  
  //Get the date format for the file name
  var date = Utilities.formatDate(new Date(), "GMT+1", "MM/dd/yyyy")
- var name = "At-Bay Groups "
+ var name = "Groups"
  name = name + date;
 
  //Dynamically open new Sheet form and give it a header with needed parameters
@@ -18,7 +18,7 @@ function listAllGroups() {
  //Start pulling groups
  do {
       page = AdminDirectory.Groups.list ({
-      domain: 'at-bay.com',
+      domain: 'your-domain.com',
       pageToken: pageToken
     });
      const groups = page.groups;
