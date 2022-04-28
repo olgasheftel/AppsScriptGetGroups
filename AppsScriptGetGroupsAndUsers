@@ -1,0 +1,41 @@
+function listAllGroups() {
+
+ //Open connection to the cloud
+ let pageToken;
+ let page;
+ 
+ //Get the date format for the file name
+ var date = Utilities.formatDate(new Date(), "GMT+1", "MM/dd/yyyy")
+ var name = "At-Bay Groups "
+ name = name + date;
+
+ //Dynamically open new Sheet form and give it a header with needed parameters
+ var sheetID = SpreadsheetApp.create(name).getId();
+ var groupsSheet = SpreadsheetApp.openById(sheetID);
+ var header = ["Group Name",'Group Email','Members Count','User Email','User Role'];
+ groupsSheet.appendRow(header).setFrozenRows(1);
+
+ //Start pulling groups
+ do {
+      page = AdminDirectory.Groups.list ({
+      domain: 'at-bay.com',
+      pageToken: pageToken
+    });
+     const groups = page.groups;
+
+     //Inspect each group by it's parameters
+     for (const group of groups) {
+         //Logger.log('%s (%s)', group.name, group.email);
+         //Get all members from a specific group and edit Sheet form
+         var users = AdminDirectory.Members.list(group.email);
+         groupsSheet.appendRow([group.name, group.email, group.directMembersCount]);
+         if(group.directMembersCount != 0){
+           for(const user of users.members){
+             groupsSheet.appendRow([, , , user.email, user.role]);
+           }
+          }
+      }
+      pageToken = page.nextPageToken;
+  } while (pageToken);
+}
+
